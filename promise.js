@@ -9,30 +9,31 @@ class Promise {
     }
     // 如果x是一个看似thenable
     if ((typeof x === "object" && x !== null) || typeof x === "function") {
+      let called;
       try {
         const then = x.then;
         if (typeof then === "function") {
           then.call(
             x,
             (y) => {
-              if (y instanceof Promise) {
-                reject(
-                  new TypeError(
-                    "如果一个 promise 被一个循环的 thenable 链中的对象解决，而 [[Resolve]](promise, thenable) 的递归性质又使得其被再次调用，根据上述的算法将会陷入无限递归之中。算法虽不强制要求，但也鼓励施者检测这样的递归是否存在，若检测到存在则以一个可识别的 TypeError 为据因来拒绝 promise。"
-                  )
-                );
-              } else {
-                resolve(y);
-              }
+              if (called) return;
+              called = true;
+              Promise.resolvePromise(promise2, y, resolve, reject);
             },
             (r) => {
+              if (called) return;
+              called = true;
               reject(r);
             }
           );
         } else {
+          if (called) return;
+          called = true;
           resolve(x);
         }
       } catch (e) {
+        if (called) return;
+        called = true;
         reject(e);
       }
     } else {
