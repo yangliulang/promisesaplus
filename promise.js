@@ -76,6 +76,14 @@ class Promise {
     }
   }
   then(onFulfilled, onRejected) {
+    onFulfilled =
+      typeof onFulfilled === "function" ? onFulfilled : (val) => val;
+    onRejected =
+      typeof onRejected === "function"
+        ? onRejected
+        : (val) => {
+            throw val;
+          };
     const promise2 = new Promise((resolve, reject) => {
       if (this.status === "Fulfilled") {
         setTimeout(() => {
@@ -102,7 +110,6 @@ class Promise {
           setTimeout(() => {
             try {
               const x = onFulfilled(this.value);
-
               Promise.resolvePromise(promise2, x, resolve, reject);
             } catch (e) {
               reject(e);
@@ -124,6 +131,27 @@ class Promise {
 
     return promise2;
   }
+  catch(onRejected) {
+    return this.then(null, onRejected);
+  }
+  finally(onFinally) {
+    return this.then(
+      () => {
+        onFinally(this.value);
+      },
+      () => {
+        onFinally(this.reason);
+      }
+    );
+  }
 }
-
+Promise.deferred = function () {
+  const dfd = {};
+  dfd.promise = new Promise((resolve, reject) => {
+    dfd.resolve = resolve;
+    dfd.reject = reject;
+  });
+  return dfd;
+};
+// promises-aplus-tests ./promise.js
 module.exports = Promise;
