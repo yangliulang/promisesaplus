@@ -1,4 +1,21 @@
 class Promise {
+  static all(promises) {
+    return new Promise((resolve, reject) => {
+      const promisesArray = [];
+      promises.forEach((any, index) => {
+        if (any instanceof Promise) {
+          any.then(ret => {
+            promisesArray[index] = ret;
+            if (promisesArray.length === promises.length) {
+              resolve(promisesArray);
+            }
+          }, reject);
+        } else {
+          promisesArray[index] = any;
+        }
+      });
+    });
+  }
   static resolvePromise(promise2, x, resolve, reject) {
     if (promise2 === x) {
       return reject(
