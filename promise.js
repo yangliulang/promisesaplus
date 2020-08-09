@@ -1,8 +1,8 @@
 class Promise {
   // todo....
   static race() {}
-  static reject(){}
-  static resolve()
+  static reject() {}
+  static resolve() {}
   static all(promises) {
     return new Promise((resolve, reject) => {
       const promisesArray = [];
