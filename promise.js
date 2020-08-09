@@ -15,12 +15,12 @@ class Promise {
         if (typeof then === "function") {
           then.call(
             x,
-            (y) => {
+            y => {
               if (called) return;
               called = true;
               Promise.resolvePromise(promise2, y, resolve, reject);
             },
-            (r) => {
+            r => {
               if (called) return;
               called = true;
               reject(r);
@@ -53,19 +53,23 @@ class Promise {
     this.onRejectedCallbacks = [];
     // 一个执行executor函数提供给他的两个方法
     // 用来作为成功和失败时的回调
-    const resolve = (value) => {
+    const resolve = value => {
+      // 如果一上来执行的resolve一个promise 继续调用then
+      if (value instanceof Promise) {
+        return value.then(resolve, reject);
+      }
       //只有当promise处于等待状态时候才可以改变值，并且改变后状态不可变
       if (this.status === "Pending") {
         this.status = "Fulfilled";
         this.value = value;
-        this.onResolvedCallbacks.forEach((cb) => cb());
+        this.onResolvedCallbacks.forEach(cb => cb());
       }
     };
-    const reject = (reason) => {
+    const reject = reason => {
       if (this.status === "Pending") {
         this.status = "Rejected";
         this.reason = reason;
-        this.onRejectedCallbacks.forEach((cb) => cb());
+        this.onRejectedCallbacks.forEach(cb => cb());
       }
     };
     // 初次就执行executor
@@ -76,12 +80,11 @@ class Promise {
     }
   }
   then(onFulfilled, onRejected) {
-    onFulfilled =
-      typeof onFulfilled === "function" ? onFulfilled : (val) => val;
+    onFulfilled = typeof onFulfilled === "function" ? onFulfilled : val => val;
     onRejected =
       typeof onRejected === "function"
         ? onRejected
-        : (val) => {
+        : val => {
             throw val;
           };
     const promise2 = new Promise((resolve, reject) => {
@@ -133,16 +136,6 @@ class Promise {
   }
   catch(onRejected) {
     return this.then(null, onRejected);
-  }
-  finally(onFinally) {
-    return this.then(
-      () => {
-        onFinally(this.value);
-      },
-      () => {
-        onFinally(this.reason);
-      }
-    );
   }
 }
 Promise.deferred = function () {
