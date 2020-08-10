@@ -1,24 +1,27 @@
 const Promise = require("./promise");
-// const fs = require("fs");
 
-Promise.all([
-  1,
-  2,
-  new Promise((resolve, reject) => {
-    setTimeout(() => resolve(100), 1000);
-  }),
-  "yangyong",
-  new Promise((resolve, reject) => {
-    setTimeout(() => reject(120), 1000);
-  })
-]).then(
-  re => {
-    console.log("wdqwd", re);
-  },
-  err => {
-    console.log("err", err);
-  }
-);
+Promise.reject(9).catch((ret) => {
+  console.log("ret", ret);
+});
+
+// Promise.allSettled([
+//   1,
+//   2,
+//   new Promise((resolve, reject) => {
+//     setTimeout(() => reject(100), 1000);
+//   }),
+//   "yangyong",
+//   new Promise((resolve, reject) => {
+//     setTimeout(() => resolve(120), 2000);
+//   })
+// ]).then(
+//   (re) => {
+//     console.log("wdqwd", re);
+//   },
+//   (err) => {
+//     console.log("err", err);
+//   }
+// );
 
 // function promiseify(callback) {
 //   return function (...args) {
