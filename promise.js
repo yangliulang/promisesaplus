@@ -1,6 +1,16 @@
 class Promise {
-  // todo....
-  static race(promises) {}
+  static race(promises) {
+    return new Promise((resolve, reject) => {
+      let ret;
+      promises.forEach((promise) => {
+        if (promise instanceof Promise) {
+          promise.then(resolve, reject);
+        } else {
+          resolve(promise);
+        }
+      });
+    });
+  }
   static reject(value) {
     return new Promise((resolve, reject) => {
       reject(value);
@@ -181,6 +191,18 @@ class Promise {
   }
   catch(onRejected) {
     return this.then(null, onRejected);
+  }
+  finally(callback) {
+    return this.then(
+      (value) => {
+        return Promise.resolve(callback()).then(() => value);
+      },
+      (err) => {
+        return Promise.resolve(callback()).then(() => {
+          throw err;
+        });
+      }
+    );
   }
 }
 Promise.deferred = function () {

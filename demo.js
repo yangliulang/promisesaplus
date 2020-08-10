@@ -1,18 +1,15 @@
 const Promise = require("./promise");
 
-Promise.reject(9).catch((ret) => {
-  console.log("ret", ret);
-});
+// Promise.reject(9).catch((ret) => {
+//   console.log("ret", ret);
+// });
 
-// Promise.allSettled([
-//   1,
-//   2,
+// Promise.race([
 //   new Promise((resolve, reject) => {
 //     setTimeout(() => reject(100), 1000);
 //   }),
-//   "yangyong",
 //   new Promise((resolve, reject) => {
-//     setTimeout(() => resolve(120), 2000);
+//     setTimeout(() => resolve(120), 500);
 //   })
 // ]).then(
 //   (re) => {
@@ -45,15 +42,17 @@ Promise.reject(9).catch((ret) => {
 //   }
 // );
 // 常规使用 resolve(promise)
-// const p = new Promise(function (resolve, reject) {
-//   resolve(
-//     new Promise((resolve, reject) => {
-//       setTimeout(() => {
-//         resolve(0);
-//       }, 1000);
-//     })
-//   );
-// });
-// p.then(r => {
-//   console.log(r);
-// });
+const p = new Promise(function (resolve, reject) {
+  resolve(
+    new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(0);
+      }, 1000);
+    })
+  );
+});
+p.then((r) => {
+  console.log(r);
+}).finally(() => {
+  console.log("finally");
+});
