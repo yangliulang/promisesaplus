@@ -1,18 +1,30 @@
 // const Promise = require("./promise");
 
-// import Promise from "./promise.js";
-const p1 = new Promise((resolve, reject) => {
-  setTimeout(() => {
-    reject("p1");
-  }, 1000);
-});
+import Promise from "./promise.js";
+// const p1 = new Promise((resolve, reject) => {
+//   setTimeout(() => {
+//     reject("p1");
+//   }, 1000);
+// });
 const p2 = new Promise((resolve, reject) => {
   resolve("p2");
-});
+})
+  .then(
+    (ret) => {
+      console.log("resolve", ret);
+      return 10;
+    },
+    (err) => {
+      console.log("catch", err);
+    }
+  )
+  .then((ret) => {
+    console.log("resolve next:", ret);
+  });
 
-Promise.allSettled([10, 20]).then((ret) => {
-  console.log(ret);
-});
+// Promise.allSettled([10, 20]).then((ret) => {
+//   console.log(ret);
+// });
 // Promise.reject(9).catch((ret) => {
 //   console.log("ret", ret);
 // });
