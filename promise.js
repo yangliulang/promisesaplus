@@ -1,4 +1,4 @@
-class Promise {
+export default class Promise {
   static race(promises) {
     return new Promise((resolve, reject) => {
       let ret;
@@ -31,8 +31,15 @@ class Promise {
         if (any instanceof Promise) {
           any.then(
             (ret) => {
-              promisesArray[index] = ret;
-              if (promisesArray.length === promises.length) {
+              if (!settled) {
+                promisesArray[index] = ret;
+              } else {
+                promisesArray[index] = { status: "fulfilled", value: ret };
+              }
+              if (
+                Array.from(promisesArray).filter((item) => item !== undefined)
+                  .length === promises.length
+              ) {
                 resolve(promisesArray);
               }
             },
@@ -40,7 +47,11 @@ class Promise {
               if (!settled) {
                 reject(err);
               } else {
-                promisesArray[index] = err;
+                if (!settled) {
+                  promisesArray[index] = err;
+                } else {
+                  promisesArray[index] = { status: "rejected", reason: err };
+                }
                 if (promisesArray.length === promises.length) {
                   resolve(promisesArray);
                 }
@@ -48,7 +59,11 @@ class Promise {
             }
           );
         } else {
-          promisesArray[index] = any;
+          if (!settled) {
+            promisesArray[index] = any;
+          } else {
+            promisesArray[index] = { status: "fulfilled", value: any };
+          }
         }
       });
     });
@@ -205,13 +220,13 @@ class Promise {
     );
   }
 }
-Promise.deferred = function () {
-  const dfd = {};
-  dfd.promise = new Promise((resolve, reject) => {
-    dfd.resolve = resolve;
-    dfd.reject = reject;
-  });
-  return dfd;
-};
-// promises-aplus-tests ./promise.js
-module.exports = Promise;
+// Promise.deferred = function () {
+//   const dfd = {};
+//   dfd.promise = new Promise((resolve, reject) => {
+//     dfd.resolve = resolve;
+//     dfd.reject = reject;
+//   });
+//   return dfd;
+// };
+// // promises-aplus-tests ./promise.js
+// module.exports = Promise;

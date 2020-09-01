@@ -1,5 +1,18 @@
-const Promise = require("./promise");
+// const Promise = require("./promise");
 
+// import Promise from "./promise.js";
+const p1 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    reject("p1");
+  }, 1000);
+});
+const p2 = new Promise((resolve, reject) => {
+  resolve("p2");
+});
+
+Promise.allSettled([10, 20]).then((ret) => {
+  console.log(ret);
+});
 // Promise.reject(9).catch((ret) => {
 //   console.log("ret", ret);
 // });
@@ -42,17 +55,17 @@ const Promise = require("./promise");
 //   }
 // );
 // 常规使用 resolve(promise)
-const p = new Promise(function (resolve, reject) {
-  resolve(
-    new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(0);
-      }, 1000);
-    })
-  );
-});
-p.then((r) => {
-  console.log(r);
-}).finally(() => {
-  console.log("finally");
-});
+// const p = new Promise(function (resolve, reject) {
+//   resolve(
+//     new Promise((resolve, reject) => {
+//       setTimeout(() => {
+//         resolve(0);
+//       }, 1000);
+//     })
+//   );
+// });
+// p.then((r) => {
+//   console.log(r);
+// }).finally(() => {
+//   console.log("finally");
+// });
